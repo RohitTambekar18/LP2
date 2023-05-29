@@ -1,0 +1,67 @@
+import java.util.*;
+
+class DijkstraAlgorithm {
+    private static final int INF = Integer.MAX_VALUE;
+
+    public void dijkstra(int[][] graph, int src) {
+        int V = graph.length;
+
+        int[] dist = new int[V];
+        boolean[] visited = new boolean[V];
+
+        Arrays.fill(dist, INF);
+        dist[src] = 0;
+
+        for (int count = 0; count < V - 1; count++) {
+            int u = minDistance(dist, visited);
+            visited[u] = true;
+
+            for (int v = 0; v < V; v++) {
+                if (!visited[v] && graph[u][v] != 0 && dist[u] != INF && dist[u] + graph[u][v] < dist[v]) {
+                    dist[v] = dist[u] + graph[u][v];
+                }
+            }
+        }
+
+        System.out.println("Shortest distances from source vertex " + src + " to all other vertices:");
+        for (int i = 0; i < V; i++) {
+            System.out.println("Vertex " + i + ": " + dist[i]);
+        }
+    }
+
+    private int minDistance(int[] dist, boolean[] visited) {
+        int min = INF;
+        int minIndex = -1;
+
+        for (int v = 0; v < dist.length; v++) {
+            if (!visited[v] && dist[v] < min) {
+                min = dist[v];
+                minIndex = v;
+            }
+        }
+
+        return minIndex;
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of vertices: ");
+        int V = scanner.nextInt();
+
+        int[][] graph = new int[V][V];
+
+        System.out.println("Enter the adjacency matrix of the graph:");
+        for (int i = 0; i < V; i++) {
+            for (int j = 0; j < V; j++) {
+                graph[i][j] = scanner.nextInt();
+            }
+        }
+
+        System.out.print("Enter the source vertex: ");
+        int src = scanner.nextInt();
+
+        DijkstraAlgorithm dijkstra = new DijkstraAlgorithm();
+        dijkstra.dijkstra(graph, src);
+    }
+}

@@ -1,0 +1,84 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <climits>
+
+using namespace std;
+
+class Graph {
+    int V;
+    vector<vector<int>> adj;
+
+public:
+    Graph(int v) : V(v), adj(v, vector<int>(v, 0)) {}
+
+    void addEdge(int u, int v) {
+        adj[u][v] = 1;
+        adj[v][u] = 1;
+    }
+
+    bool isSafe(int v, vector<int>& colors, int c) {
+        for (int i = 0; i < V; ++i) {
+            if (adj[v][i] && colors[i] == c) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool graphColoringUtil(int m, vector<int>& colors, int v, int& numSolutions) {
+        if (v == V) {
+            ++numSolutions;
+            cout << "Solution " << numSolutions << ": ";
+            for (int i = 0; i < V; ++i) {
+                cout << colors[i] << " ";
+            }
+            cout << endl;
+            return true;
+        }
+
+        for (int c = 1; c <= m; ++c) {
+            if (isSafe(v, colors, c)) {
+                colors[v] = c;
+                if (graphColoringUtil(m, colors, v + 1, numSolutions)) {
+                    return true;
+                }
+                colors[v] = 0; // backtrack
+            }
+        }
+        return false;
+    }
+
+    void graphColoring(int m) {
+        vector<int> colors(V, 0);
+        int numSolutions = 0;
+        if (!graphColoringUtil(m, colors, 0, numSolutions)) {
+            cout << "No solution exists." << endl;
+        }
+    }
+};
+
+int main() {
+    int V, E, m;
+    cout << "Enter the number of vertices: ";
+    cin >> V;
+    cout << "Enter the number of edges: ";
+    cin >> E;
+    cout << "Enter the number of colors: ";
+    cin >> m;
+
+    Graph graph(V);
+
+    cout << "Enter the edges (u v):" << endl;
+    for (int i = 0; i < E; ++i) {
+        int u, v;
+        cin >> u >> v;
+        graph.addEdge(u, v);
+    }
+
+    cout << "Possible colorings:" << endl;
+    graph.graphColoring(m);
+
+    return 0;
+}
+
